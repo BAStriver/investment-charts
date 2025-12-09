@@ -1,36 +1,27 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import {computed, onMounted, ref} from 'vue'
 import HelloWorld from './components/HelloWorld.vue'
-import LineChart from './components/LineChart.vue'
-import PieChart from './components/PieChart.vue'
-import HalfPieChart from './components/HalfPieChart.vue'
+import GaugeChart from './components/GaugeChart.vue'
 
-const chartData = ref([])
-const xAxisData = ref([])
-const pieData = ref([])
-const halfPieData = ref([])
+const gaugeValue = ref(0)
+const indicatorValue = ref(0)
 const loading = ref(true)
+
+// Computed property to get current status
+const currentStatus = computed(() => {
+  const value = gaugeValue.value
+  if (value <= 20) return { text: '极度恐慌', type: 'danger' }
+  if (value <= 40) return { text: '恐慌', type: 'warning' }
+  if (value <= 60) return { text: '中性', type: 'info' }
+  if (value <= 80) return { text: '乐观', type: 'primary' }
+  return { text: '极度乐观', type: 'success' }
+})
 
 // Simulate data loading
 onMounted(() => {
   setTimeout(() => {
-    chartData.value = [120, 200, 150, 80, 70, 110, 130]
-    xAxisData.value = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-    
-    pieData.value = [
-      { value: 1048, name: 'Search Engine' },
-      { value: 735, name: 'Direct' },
-      { value: 580, name: 'Email' },
-      { value: 484, name: 'Union Ads' },
-      { value: 300, name: 'Video Ads' }
-    ]
-    
-    halfPieData.value = [
-      { value: 35, name: 'Desktop' },
-      { value: 45, name: 'Mobile' },
-      { value: 20, name: 'Tablet' }
-    ]
-    
+    gaugeValue.value = 31
+    indicatorValue.value = 65
     loading.value = false
   }, 1000)
 })
@@ -50,49 +41,19 @@ onMounted(() => {
         <el-card class="chart-card">
           <template #header>
             <div class="card-header">
-              <span>Line Chart</span>
-              <el-tag type="success" v-if="!loading">Live Data</el-tag>
+              <span>恐慌贪婪指数</span>
+              <div>
+                <el-tag :type="currentStatus.type" size="large">
+                  {{ gaugeValue }} - {{ currentStatus.text }}
+                </el-tag>
+              </div>
             </div>
           </template>
-          <LineChart 
-            :data="chartData"
-            :x-axis-data="xAxisData"
+          <GaugeChart
+            :value="gaugeValue"
             :loading="loading"
-            title="Weekly Sales"
+            title="最近更新于 Dec 9 9:37:07 AM"
             height="300px"
-          />
-        </el-card>
-      </el-col>
-      
-      <el-col :span="12">
-        <el-card class="chart-card">
-          <template #header>
-            <div class="card-header">
-              <span>Traffic Sources</span>
-            </div>
-          </template>
-          <PieChart 
-            :data="pieData"
-            :loading="loading"
-            title="Traffic Sources"
-            height="350px"
-          />
-        </el-card>
-      </el-col>
-      
-      <el-col :span="12">
-        <el-card class="chart-card">
-          <template #header>
-            <div class="card-header">
-              <span>Device Usage</span>
-            </div>
-          </template>
-          <HalfPieChart 
-            :data="halfPieData"
-            :loading="loading"
-            title="Device Usage Distribution"
-            height="350px"
-            :colors="['#409EFF', '#67C23A', '#E6A23C']"
           />
         </el-card>
       </el-col>
