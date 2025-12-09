@@ -16,7 +16,7 @@ const props = defineProps({
     type: Array,
     required: true
   },
-  xAxisData: {
+  yAxisData: {
     type: Array,
     required: true
   },
@@ -36,6 +36,10 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
+  color: {
+    type: String,
+    default: '#5470c6'
+  },
   showLabels: {
     type: Boolean,
     default: true
@@ -44,31 +48,47 @@ const props = defineProps({
 
 const chartOption = computed(() => ({
   title: {
-    text: props.title
+    text: props.title,
+    left: 'center'
   },
   tooltip: {
-    trigger: 'axis'
+    trigger: 'axis',
+    axisPointer: {
+      type: 'shadow'
+    }
+  },
+  grid: {
+    left: '3%',
+    right: '4%',
+    bottom: '3%',
+    containLabel: true
   },
   xAxis: {
-    type: 'category',
-    data: props.xAxisData
+    type: 'value',
+    boundaryGap: [0, 0.01]
   },
   yAxis: {
-    type: 'value'
+    type: 'category',
+    data: props.yAxisData
   },
   series: [{
+    name: props.title,
+    type: 'bar',
     data: props.data,
-    type: 'line',
-    smooth: true,
+    itemStyle: {
+      color: props.color
+    },
+    emphasis: {
+      itemStyle: {
+        color: '#a5c231'
+      }
+    },
     label: {
       show: props.showLabels,
-      position: 'top',
+      position: 'right',
       fontSize: 12,
       color: '#333',
-      formatter: '{c}'
-    },
-    itemStyle: {
-      color: '#5470c6'
+      formatter: '{c}%'
     },
     lineStyle: {
       width: 2
